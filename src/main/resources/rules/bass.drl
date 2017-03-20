@@ -1,0 +1,37 @@
+package com.wk.app.rules
+
+import com.wk.app.facts.buspass.*;
+
+declare IsAdult
+	person: Person
+end
+
+declare IsChild
+	person: Person
+end
+
+rule IsChildPolicy when
+    p : Person( age < 16 )
+then
+    insertLogical( new IsChild( p ) );
+end
+
+rule IsAdultPolicy when
+    p : Person( age >= 16 )
+then
+    insertLogical( new IsAdult( p ) );
+end
+
+rule IssueChildBusPass when
+    p : Person()
+    IsChild( person == p )
+then
+    insertLogical( new ChildBusPass( p ) );
+end
+
+rule IssueAdultBusPass when
+    p : Person()
+    IsAdult( person == p )
+then
+    insertLogical( new AdultBusPass( p ) );
+end
