@@ -19,14 +19,13 @@ public class IndexController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String indexPage() {
-        logger.info("index");
+        logger.info("index.jsp - start");
         return "index";
     }
 
-    @RequestMapping(value = "/json", method = RequestMethod.GET, produces = {"application/json"})
+    @RequestMapping(value = "/listuser", method = RequestMethod.GET, produces = {"application/json"})
     @ResponseBody
-    public List<String> hello() {
-        System.out.println("hello");
+    public List<String> listUserTest() {
         final List<String> users = new ArrayList<>();
         users.add("userRal(Тест JSON)");
         users.add("userFass");
@@ -35,7 +34,6 @@ public class IndexController {
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String loginPage() {
-        System.out.println("login url request");
         return "login";
     }
 }

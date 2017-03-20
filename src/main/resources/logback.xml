@@ -13,7 +13,7 @@
         </encoder>
     </appender>
 
-    <logger name="com.home.drools" additivity="false">
+    <logger name="com.wk" additivity="false">
         <level value="${DR_LOG_LEVEL}"/>
         <appender-ref ref="STDOUT"/>
     </logger>
