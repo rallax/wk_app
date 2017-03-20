@@ -2,6 +2,7 @@ package com.wk.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.couchbase.config.AbstractCouchbaseConfiguration;
 import org.springframework.data.couchbase.repository.config.EnableCouchbaseRepositories;
 
@@ -13,6 +14,7 @@ import java.util.List;
  */
 @Configuration
 @EnableCouchbaseRepositories(basePackages = "com.wk.app.couchbase.repository")
+@PropertySource("classpath:config/application.properties")
 public class CouchbaseConfiguration extends AbstractCouchbaseConfiguration {
 
     @Value("${couchbase.host}")

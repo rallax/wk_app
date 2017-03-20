@@ -1,12 +1,12 @@
 package com.wk.app.controller.temp;
 
-import com.wk.app.couchbase.model.Sms;
 import com.wk.app.couchbase.repository.SmsRepository;
-import com.wk.app.facts.SmsBillingRecord;
+import com.wk.app.facts.Sms;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -15,9 +15,12 @@ import java.util.List;
 /**
  * @author Roman Luzko
  */
-@Controller
 //todo для тестов
+@RestController
+@RequestMapping("/user")
 public class UserController {
+
+    Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
     SmsRepository smsRepository;
@@ -38,16 +41,22 @@ public class UserController {
         return users;
     }
 
-    @RequestMapping(value = "/sms", method = RequestMethod.POST)
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
     //example {"id":1,"sender":"43423423","receiver":"4545","local":false,"date":[2017,3,17]}
-    public void add(@RequestBody Sms sms) {
-        com.wk.app.couchbase.model.Sms cbSms = new com.wk.app.couchbase.model.Sms();
-        cbSms.setId(sms.getId());
-        cbSms.setLocal(sms.isLocal());
-        cbSms.setNppPerDay(sms.getNppPerDay());
-        cbSms.setReceiver(sms.getReceiver());
-        cbSms.setSender(sms.getSender());
-        smsRepository.save(cbSms);
+    public ResponseEntity<Sms> register(@RequestBody Sms sms) {
+        try {
+            com.wk.app.couchbase.model.Sms cbSms = new com.wk.app.couchbase.model.Sms();
+            cbSms.setId(sms.getId());
+            cbSms.setLocal(sms.isLocal());
+            cbSms.setNppPerDay(sms.getNppPerDay());
+            cbSms.setReceiver(sms.getReceiver());
+            cbSms.setSender(sms.getSender());
+            smsRepository.save(cbSms);
+            return new ResponseEntity<>(sms, HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 }
