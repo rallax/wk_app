@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Import;
  * @author andrey.trotsenko
  */
 @Configuration
-@Import({RabbitConfiguration.class})
+@Import({RabbitConfiguration.class, CouchbaseConfiguration.class})
 public class BusinessConfig {
 
     @Bean
