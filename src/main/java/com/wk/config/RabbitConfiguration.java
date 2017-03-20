@@ -21,12 +21,18 @@ import org.springframework.context.annotation.PropertySource;
 public class RabbitConfiguration {
     @Value("${rabbitmq.host}")
     private String rabbitMqHost;
+    @Value("${rabbitmq.user}")
+    private String rabbitMqUser;
+    @Value("${rabbitmq.password}")
+    private String rabbitMqPassword;
     @Value("${rabbitmq.queue.test}")
     private String queueTestName;
 
     @Bean
     public ConnectionFactory connectionFactory() {
         CachingConnectionFactory connectionFactory = new CachingConnectionFactory(rabbitMqHost);
+        connectionFactory.setUsername(rabbitMqUser);
+        connectionFactory.setPassword(rabbitMqPassword);
         return connectionFactory;
     }
 
