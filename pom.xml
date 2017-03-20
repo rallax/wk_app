@@ -4,11 +4,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.home.drools</groupId>
-    <artifactId>DR</artifactId>
+    <groupId>com.wk.app</groupId>
+    <artifactId>wkapp</artifactId>
     <packaging>war</packaging>
     <version>1.0-SNAPSHOT</version>
-    <name>DR</name>
+    <name>wkapp</name>
 
     <properties>
         <spring.version>4.3.7.RELEASE</spring.version>
@@ -155,7 +155,7 @@
         </resources>
 
         <directory>${basedir}/target</directory>
-        <finalName>DR</finalName>
+        <finalName>wkapp</finalName>
 
     <plugins>
         <plugin>
