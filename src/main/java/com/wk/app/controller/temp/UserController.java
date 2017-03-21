@@ -1,6 +1,9 @@
 package com.wk.app.controller.temp;
 
+import com.wk.app.couchbase.model.Customer;
+import com.wk.app.couchbase.repository.CustomerRepository;
 import com.wk.app.couchbase.repository.SmsRepository;
+import com.wk.app.enums.Tariff;
 import com.wk.app.facts.Sms;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +27,8 @@ public class UserController {
 
     @Autowired
     SmsRepository smsRepository;
+    @Autowired
+    CustomerRepository customerRepository;
 
     @RequestMapping(value = "/user", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
@@ -57,6 +62,17 @@ public class UserController {
             logger.error(e.getMessage(), e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @RequestMapping(value = "/list", method = RequestMethod.GET, produces = {"application/json"})
+    @ResponseBody
+    public List<com.wk.app.couchbase.model.Sms> getBySender(@RequestParam(required = true) String sender) {
+
+        Customer customer = new Customer("12341234", Tariff.SMART);
+        customerRepository.save(customer);
+
+        List<com.wk.app.couchbase.model.Sms> smsList = new ArrayList<>();
+        return smsRepository.findBySender(sender);
     }
 
 }
