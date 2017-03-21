@@ -8,18 +8,19 @@ import java.math.BigDecimal;
 declare Charge
 	customer : Customer @key
 	sms : Sms @key
-	nppPerDay : int @key
+	countPerDay : int @key
 	local : boolean @key
 end
 
 rule "Формируем расходы отправителя"
 when
-    $sms : Sms($sender : sender)
-    $customer: Customer(number==$sender)
+    $sms : Sms($sender : sender, $date : date)
+    $customer : Customer(number==$sender)
+    $smcCount : SmsCountPerDay(number==$sender, date==$date)
     not Charge(customer != $customer, sms==$sms)
 then
     System.out.println( "Create Charge with customer: " + $customer + " sms: " + $sms );
-    insertLogical(new Charge($customer, $sms, $sms.getNppPerDay(), $sms.isLocal()));
+    insertLogical(new Charge($customer, $sms, $smcCount.getCount(), $sms.isLocal()));
 end
 
 
@@ -35,7 +36,7 @@ end
 rule "Тариф SMART первые 5 смс/день бесплатные"
 when
     $customer: Customer(tariff==Tariff.SMART)
-    Charge($sms : sms, customer == $customer, nppPerDay <= 5)
+    Charge($sms : sms, customer == $customer, countPerDay <= 5)
 
 then
     System.out.println( "Price 0.0 for " + $customer.getNumber() );
@@ -46,7 +47,7 @@ end
 rule "Тариф SMART локальный"
 when
     $customer: Customer(tariff==Tariff.SMART)
-    Charge($sms : sms, customer == $customer, nppPerDay > 5, local == true)
+    Charge($sms : sms, customer == $customer, countPerDay > 5, local == true)
 then
     System.out.println( "Price 1.5 for " + $customer.getNumber() );
     insertLogical(new SmsBillingRecord($customer, new BigDecimal(1.5), $sms));
@@ -55,18 +56,9 @@ end
 rule "Тариф SMART на другие операторы"
 when
     $customer: Customer(tariff==Tariff.SMART)
-    Charge($sms : sms, customer == $customer, nppPerDay > 5, local == false)
+    Charge($sms : sms, customer == $customer, countPerDay > 5, local == false)
 then
     System.out.println( "Price 2.5 for " + $customer.getNumber() );
     insertLogical(new SmsBillingRecord($customer, new BigDecimal(2.5), $sms));
-end
-
-rule "Test"
-when
-    $customer: Customer(tariff==Tariff.SIMPLE)
-    Charge($sms : sms, customer == $customer)
-    accumulate($c : Charge(sms == $sms, customer == $customer);$count : count($c); $count <= 3)
-then
-    System.out.println( "Test " + $count);
 end
 

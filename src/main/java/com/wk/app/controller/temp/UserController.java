@@ -51,9 +51,8 @@ public class UserController {
     public ResponseEntity<Sms> register(@RequestBody Sms sms) {
         try {
             com.wk.app.couchbase.model.Sms cbSms = new com.wk.app.couchbase.model.Sms();
-            cbSms.setId(sms.getId());
+            cbSms.setId(1L);
             cbSms.setLocal(sms.isLocal());
-            cbSms.setNppPerDay(sms.getNppPerDay());
             cbSms.setReceiver(sms.getReceiver());
             cbSms.setSender(sms.getSender());
             smsRepository.save(cbSms);

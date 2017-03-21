@@ -7,5 +7,5 @@ import com.wk.app.facts.SmsBillingRecord;
  * @author andrey.trotsenko
  */
 public interface SmsBillingService {
-    SmsBillingRecord calculate(Sms sms);
+    SmsBillingRecord calculateAndSave(Sms sms);
 }
