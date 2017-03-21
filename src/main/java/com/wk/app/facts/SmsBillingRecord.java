@@ -5,7 +5,9 @@ import java.math.BigDecimal;
 /**
  * @author andrey.trotsenko
  */
-public class SmsBillingRecord extends BillingRecord {
+public class SmsBillingRecord  {
+    private Customer customer;
+    private BigDecimal price;
     private Sms sms;
 
     public SmsBillingRecord() {
@@ -23,5 +25,21 @@ public class SmsBillingRecord extends BillingRecord {
 
     public void setSms(Sms sms) {
         this.sms = sms;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 }

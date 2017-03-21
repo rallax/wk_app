@@ -1,36 +1,31 @@
 package com.wk.app.facts;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 
 /**
  * @author andrey.trotsenko
  */
 public class Sms {
-    private Long id;
     private String sender;
     private String receiver;
     private boolean local = true;
-    private LocalDate date;
-    private int nppPerDay;
+
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    private Date time;
 
     public Sms() {
     }
 
-    public Sms(Long id, String sender, String receiver, boolean local, LocalDate date) {
-        this.id = id;
+    public Sms(String sender, String receiver, boolean local, Date time) {
         this.sender = sender;
         this.receiver = receiver;
         this.local = local;
-        this.date = date;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+        this.time = time;
     }
 
     public String getSender() {
@@ -50,11 +45,10 @@ public class Sms {
     }
 
     public LocalDate getDate() {
-        return date;
-    }
+        if(time == null)
+            return null;
 
-    public void setDate(LocalDate date) {
-        this.date = date;
+        return time.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
 
     public boolean isLocal() {
@@ -65,11 +59,11 @@ public class Sms {
         this.local = local;
     }
 
-    public int getNppPerDay() {
-        return nppPerDay;
+    public Date getTime() {
+        return time;
     }
 
-    public void setNppPerDay(int nppPerDay) {
-        this.nppPerDay = nppPerDay;
+    public void setTime(Date time) {
+        this.time = time;
     }
 }

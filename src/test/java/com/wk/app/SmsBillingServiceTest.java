@@ -21,7 +21,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import javax.inject.Inject;
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.util.Date;
 import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
@@ -70,53 +70,69 @@ public class SmsBillingServiceTest {
         ((HashMap<String, Integer>)ReflectionTestUtils.getField(smsBillingService, "smses")).clear();
     }
 
+    /**
+     * Проверяем расчет цены смс для тарифа SIMPLE в локальной сети
+     */
     @Test
     public void tariffSimpleLocal() {
         mockCustomer(Tariff.SIMPLE);
-        SmsBillingRecord smsBillingRecord = smsBillingService.calculate(createDefaultLocalSms());
+        SmsBillingRecord smsBillingRecord = smsBillingService.calculateAndSave(createDefaultLocalSms());
 
         assertEquals(TARIFF_SIMPLE_PRICE, smsBillingRecord.getPrice());
     }
 
+    /**
+     * Проверяем расчет цены смс для тарифа SIMPLE во внешней сети
+     */
     @Test
     public void tariffSimpleExternal() {
         mockCustomer(Tariff.SIMPLE);
-        SmsBillingRecord smsBillingRecord = smsBillingService.calculate(createDefaultExternalSms());
+        SmsBillingRecord smsBillingRecord = smsBillingService.calculateAndSave(createDefaultExternalSms());
 
         assertEquals(TARIFF_SIMPLE_PRICE, smsBillingRecord.getPrice());
     }
 
+    /**
+     *  Проверяем расчет цены бесплатных смс для тарифа SMART
+     */
     @Test
     public void tariffSmartFree() {
         mockCustomer(Tariff.SMART);
 
         for (int i = 0; i < FREE_COUNT; i++) {
-            SmsBillingRecord smsBillingRecord = smsBillingService.calculate(createDefaultLocalSms());
+            SmsBillingRecord smsBillingRecord = smsBillingService.calculateAndSave(createDefaultLocalSms());
             assertEquals(TARIFF_SMART_FREE_PRICE, smsBillingRecord.getPrice());
         }
     }
 
+    /**
+     *  Проверяем расчет цены смс для тарифа SMART в локальной сети
+     */
     @Test
     public void tariffSmartAfterFreeWithLocal() {
         mockCustomer(Tariff.SMART);
 
         for (int i = 0; i < FREE_COUNT; i++) {
-            smsBillingService.calculate(createDefaultLocalSms());
+            smsBillingService.calculateAndSave(createDefaultLocalSms());
         }
 
-        SmsBillingRecord smsBillingRecord = smsBillingService.calculate(createDefaultLocalSms());
+        SmsBillingRecord smsBillingRecord = smsBillingService.calculateAndSave(createDefaultLocalSms());
         assertEquals(TARIFF_SMART_LOCAL_PRICE, smsBillingRecord.getPrice());
     }
 
+
+    /**
+     *  Проверяем расчет цены смс для тарифа SMART во внешней сети
+     */
     @Test
     public void tariffSmartAfterFreeWithExternal() {
         mockCustomer(Tariff.SMART);
 
         for (int i = 0; i < FREE_COUNT; i++) {
-            smsBillingService.calculate(createDefaultLocalSms());
+            smsBillingService.calculateAndSave(createDefaultLocalSms());
         }
 
-        SmsBillingRecord smsBillingRecord = smsBillingService.calculate(createDefaultExternalSms());
+        SmsBillingRecord smsBillingRecord = smsBillingService.calculateAndSave(createDefaultExternalSms());
         assertEquals(TARIFF_SMART_DEFAULT, smsBillingRecord.getPrice());
     }
 
@@ -134,6 +150,6 @@ public class SmsBillingServiceTest {
     }
 
     private Sms createDefaultSms(boolean local) {
-        return new Sms(1L, CUSTOMER_SENDER, "5555", local, LocalDate.of(2017, 3, 20));
+        return new Sms(CUSTOMER_SENDER, "5555", local, new Date());
     }
 }
