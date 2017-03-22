@@ -1,9 +1,10 @@
-package com.wk.app;
+package com.wk.app.tests;
 
 import com.wk.app.enums.Tariff;
 import com.wk.app.facts.Customer;
 import com.wk.app.facts.Sms;
 import com.wk.app.facts.SmsBillingRecord;
+import com.wk.app.rabbit.IMessageSender;
 import com.wk.app.service.CustomerService;
 import com.wk.app.service.SmsBillingService;
 import com.wk.app.service.SmsBillingServiceImpl;
@@ -55,6 +56,11 @@ public class SmsBillingServiceTest {
         @Bean
         public KieContainer kieContainer() {
             return KieServices.Factory.get().getKieClasspathContainer();
+        }
+
+        @Bean
+        public IMessageSender messageSenderOut() {
+            return Mockito.mock(IMessageSender.class);
         }
     }
 

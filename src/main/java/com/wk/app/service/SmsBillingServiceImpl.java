@@ -4,6 +4,8 @@ import com.wk.app.facts.Customer;
 import com.wk.app.facts.Sms;
 import com.wk.app.facts.SmsBillingRecord;
 import com.wk.app.facts.SmsCountPerDay;
+import com.wk.app.message.DefaultMessageBuilder;
+import com.wk.app.rabbit.IMessageSender;
 import com.wk.app.utill.FactFinder;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
@@ -30,16 +32,19 @@ public class SmsBillingServiceImpl implements SmsBillingService {
     @Inject
     KieContainer kieContainer;
 
+    @Inject
+    IMessageSender messageSenderOut;
+
     HashMap<String, List<SmsBillingRecord>> smses = new HashMap<>();
 
     @Override
     public SmsBillingRecord calculateAndSave(Sms sms) {
-        Customer customer = customerService.getCustomerByNumber(sms.getSender());
-        if(customer == null)
-            throw new NullPointerException("Customer is null");
-
         KieSession kieSession = null;
         try {
+            Customer customer = customerService.getCustomerByNumber(sms.getSender());
+            if(customer == null)
+                throw new NullPointerException("Customer is null");
+
             final String KSESSION_RULES = "ksession-sms-billing-rules";
             kieSession = kieContainer.newKieSession(KSESSION_RULES);
             kieSession.insert(customer);
@@ -55,11 +60,13 @@ public class SmsBillingServiceImpl implements SmsBillingService {
             logger.info("Price {} for customer {} tariff {}", smsBillingRecord.getPrice(), customer.getNumber(), customer.getTariff());
 
             saveSmsBillingRecord(smsBillingRecord);
+            messageSenderOut.sendMessage(DefaultMessageBuilder.buildDefaultMessage(smsBillingRecord));
 
             logger.info("Save smsBillingRecord");
 
             return smsBillingRecord;
         } catch (RuntimeException e) {
+            messageSenderOut.sendMessage(DefaultMessageBuilder.buildErrorDefaultMessage(e.getMessage()));
             throw new RuntimeException(e);
         } finally {
             if(kieSession != null) {

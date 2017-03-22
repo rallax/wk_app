@@ -1,4 +1,4 @@
-package com.wk.config;
+package com.wk.app.config;
 
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.Queue;
@@ -14,12 +14,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
 /**
- * @author Roman Luzko
+ * @author andrey.trotsenko
  */
-
-@PropertySource("classpath:config/application.properties")
+@PropertySource("classpath:config/application-test.properties")
 @Configuration
-public class RabbitConfiguration {
+@EnableRabbit
+public class RabbitTestConfiguration {
     @Value("${rabbitmq.host}")
     private String rabbitMqHost;
     @Value("${rabbitmq.user}")

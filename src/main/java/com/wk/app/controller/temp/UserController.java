@@ -1,5 +1,6 @@
 package com.wk.app.controller.temp;
 
+import com.google.gson.Gson;
 import com.wk.app.couchbase.model.Customer;
 import com.wk.app.couchbase.repository.CustomerRepository;
 import com.wk.app.couchbase.repository.SmsRepository;
@@ -47,14 +48,18 @@ public class UserController {
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    //example {"id":1,"sender":"43423423","receiver":"4545","local":false,"date":[2017,3,17]}
+    //example {"sender":"43423423","receiver":"4545","time":"2017-03-21T13:47:30.757+0000"}
     public ResponseEntity<Sms> register(@RequestBody Sms sms) {
         try {
+            com.wk.app.couchbase.model.Sms cbSms1 = smsRepository.findOne(2L);
+            logger.info(new Gson().toJson(cbSms1));
+
             com.wk.app.couchbase.model.Sms cbSms = new com.wk.app.couchbase.model.Sms();
             cbSms.setId(1L);
             cbSms.setLocal(sms.isLocal());
             cbSms.setReceiver(sms.getReceiver());
             cbSms.setSender(sms.getSender());
+
             smsRepository.save(cbSms);
             return new ResponseEntity<>(sms, HttpStatus.OK);
         } catch (Exception e) {

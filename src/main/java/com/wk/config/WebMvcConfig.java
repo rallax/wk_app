@@ -1,5 +1,6 @@
 package com.wk.config;
 
+import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +15,7 @@ import org.springframework.web.servlet.view.JstlView;
  */
 @Configuration
 @EnableWebMvc
+@EnableRabbit
 @ComponentScan("com.wk.app")
 public class WebMvcConfig {
     @Bean
